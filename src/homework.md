@@ -72,3 +72,8 @@ request.query (to know the query from the url, ex: localhost:3000/?userid=1001 =
 request.params (app.get("/user/:userID", (req, res)=>{}); => localhost:3000/user/1001 => {userID: '1001'})
 
 ---
+
+Multiple route handlers
+next()
+next() and errors along with res.send()
+array representation of rout handlers.(app.use('route',[rh1, rh2, rh3 ....]) === app.use('route', rh1, [rh2, rh3], rh4...) === app.use('route', rh1, rh2, [rh3], rh4...) === app.use('route', rh1, rh2, rh3, rh4...))
