@@ -4,9 +4,20 @@ const app = express();
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
-app.use("/login", (req, res) => {
-  res.send("Login route");
+app.get("/user", (req, res) => {
+  res.send("User Logged in successfully");
 });
-app.use("/hello", (req, res) => {
-  res.send("Hello route");
+app.post("/user", (req, res) => {
+  res.send(
+    "Post user data with {firstName:'Alexa', lastName:'Amazon'} is successfull",
+  );
+});
+app.patch("/user", (req, res) => {
+  res.send("User data updated with {type: 'voice assistant'} successfully");
+});
+app.delete("/user", (req, res) => {
+  res.send("User data deleted successfully");
+});
+app.use("/", (req, res) => {
+  res.send("Sample route");
 });
