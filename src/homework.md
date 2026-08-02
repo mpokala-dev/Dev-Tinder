@@ -66,4 +66,9 @@ git push -u origin main
 install Postman app and make a Workspace(Dev-Tinder) > create a Collection(Test API calls) > create a HTTP request(GET Test)
 Write logic to handle GET, POST, PATCH, DELETE, API calls and test them on Postman
 
+Explore routing ?, \* , +, ( ), : (for dynamic routing), regex --> express v5 doesnot allow route path containing spl characters, so it suggest to use regex in place of string formatted route path.
+--> for dynamic routing try to simplify the route by using route path as string
+request.query (to know the query from the url, ex: localhost:3000/?userid=1001 => request.query will log {user: '1001'})
+request.params (app.get("/user/:userID", (req, res)=>{}); => localhost:3000/user/1001 => {userID: '1001'})
+
 ---
