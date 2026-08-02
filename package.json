@@ -1,0 +1,21 @@
+{
+  "name": "devtinder",
+  "version": "1.0.0",
+  "description": "Tinder for developers",
+  "keywords": [
+    "nodejs",
+    "javascript",
+    "backend"
+  ],
+  "license": "ISC",
+  "author": "Madhuri Pokala",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/App.js",
+    "dev": "nodemon src/App.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
