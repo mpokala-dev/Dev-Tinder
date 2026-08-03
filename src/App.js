@@ -1,31 +1,29 @@
 console.log("Hello, DevTinder!");
 const express = require("express");
 const app = express();
-app.get(/^\/ab*c$/, (req, res) => {
-  res.send("Use case of regex in route path!");
+const {
+  adminAuthMiddleware,
+  userAuthMiddleware,
+} = require("./middlewares/auth");
+
+app.use("/admin", adminAuthMiddleware);
+app.get("/admin/getAllUsers", (req, res) => {
+  console.log("Admin route accessed");
+  res.send("All users data");
 });
-app.get("/user", [
-  (req, res, next) => {
-    console.log("Route Handler 1");
-    // res.send("Response1");
-    next();
-  },
-  (req, res, next) => {
-    console.log("Route Handler 2");
-    next();
-    res.send("Response2");
-  },
-  (req, res, next) => {
-    console.log("Route Handler 3");
-    next();
-    res.send("Response3");
-  },
-  (req, res, next) => {
-    console.log("Route Handler 4");
-    res.send("Response4");
-    next();
-  },
-]);
+app.delete("/admin/deleteUser/:id", (req, res) => {
+  const userId = req.params.id;
+  console.log(`Admin route accessed to delete user with ID: ${userId}`);
+  res.send("Admin deleted the User");
+});
+app.post("/user/login", (req, res) => {
+  console.log("User login successful");
+  res.send("User login data");
+});
+app.get("/user/data", userAuthMiddleware, (req, res) => {
+  console.log("User data fetched");
+  res.send("User data");
+});
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
