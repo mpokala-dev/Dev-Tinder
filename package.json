@@ -16,6 +16,8 @@
     "dev": "nodemon src/App.js"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "connect-mongo": "^6.0.0",
+    "express": "^5.2.1",
+    "mongodb": "^7.5.0"
   }
 }

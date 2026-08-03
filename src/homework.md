@@ -96,3 +96,4 @@
 
 - Write a dummy middleware for admin authorization
 - Write a dummy middleware for user authorization excluding user/login
+- Error handling with try catch block and err as a parameter in the route handler

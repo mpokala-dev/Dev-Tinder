@@ -1,29 +1,35 @@
 console.log("Hello, DevTinder!");
 const express = require("express");
-const app = express();
-const {
-  adminAuthMiddleware,
-  userAuthMiddleware,
-} = require("./middlewares/auth");
 
-app.use("/admin", adminAuthMiddleware);
-app.get("/admin/getAllUsers", (req, res) => {
-  console.log("Admin route accessed");
-  res.send("All users data");
-});
-app.delete("/admin/deleteUser/:id", (req, res) => {
-  const userId = req.params.id;
-  console.log(`Admin route accessed to delete user with ID: ${userId}`);
-  res.send("Admin deleted the User");
-});
-app.post("/user/login", (req, res) => {
-  console.log("User login successful");
-  res.send("User login data");
-});
-app.get("/user/data", userAuthMiddleware, (req, res) => {
-  console.log("User data fetched");
-  res.send("User data");
-});
+const app = express();
+
+const { MongoClient } = require("mongodb");
+const URI = "xyz.mongodb_uri"; // Replace with your actual MongoDB connection string
+
+const client = new MongoClient(URI);
+
+const dbName = "HelloWorld";
+
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
+});
+
+app.get("/user/data", async (req, res) => {
+  // say an error occurred while the the user data is requested and is handled by wild card route-- is the scenario the following code tries to handle
+  // try {
+  await client.connects(); // connects() is not a function, it should be connect()
+  const db = client.db(dbName);
+  const collection = db.collection("User");
+  const result = await collection.find({}).toArray();
+  res.send(result);
+  // } catch (error) {
+  //   console.error("Error occurred while fetching user data:", error);
+  //   res.status(500).send("Internal Server Error");
+  // }
+});
+app.use("/", (err, req, res, next) => {
+  console.log("Error captured in the wild card", err);
+  if (err) {
+    res.status(500).send("Internal server error captured at wild card level");
+  }
 });
