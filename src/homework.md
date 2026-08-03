@@ -97,3 +97,15 @@
 - Write a dummy middleware for admin authorization
 - Write a dummy middleware for user authorization excluding user/login
 - Error handling with try catch block and err as a parameter in the route handler
+
+---
+
+- Create a free cluster on MongoDB official website (Mongo Atlas) // Node-dev is the cluster already created with database HelloWorld. For this project we shall create a seperate database.
+- Install mongoose library // mongoose establishes connection between the server and the mongoDB cluster
+- create config folder to maintain the database connections.
+- Connect your application to the <b>Database</b> "(cluster)connection-url"<b>/devTinder</b>
+- Call the connectDB function and connect to database before stating to listen the application on port 3000.
+- create a userSchema for User in the models folder.
+- create POST /signup api call
+- push some documents to the database with using API call from Postman
+- Always do error handling whenever handling API calls to the database

@@ -1,35 +1,35 @@
 console.log("Hello, DevTinder!");
 const express = require("express");
-
+const connectDB = require("./config/database");
+const { getMaxListeners } = require("./models/user");
+const User = require("./models/user");
 const app = express();
 
-const { MongoClient } = require("mongodb");
-const URI = "xyz.mongodb_uri"; // Replace with your actual MongoDB connection string
+connectDB
+  .then((req, res) => {
+    console.log("Database connection established...");
+    // Server should start listening to any requests only after connecting to the Database first.
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000");
+    });
+  })
+  .catch((err) => {
+    console.log("Database connection failed...", err);
+  });
 
-const client = new MongoClient(URI);
-
-const dbName = "HelloWorld";
-
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
-
-app.get("/user/data", async (req, res) => {
-  // say an error occurred while the the user data is requested and is handled by wild card route-- is the scenario the following code tries to handle
-  // try {
-  await client.connects(); // connects() is not a function, it should be connect()
-  const db = client.db(dbName);
-  const collection = db.collection("User");
-  const result = await collection.find({}).toArray();
-  res.send(result);
-  // } catch (error) {
-  //   console.error("Error occurred while fetching user data:", error);
-  //   res.status(500).send("Internal Server Error");
-  // }
-});
-app.use("/", (err, req, res, next) => {
-  console.log("Error captured in the wild card", err);
-  if (err) {
-    res.status(500).send("Internal server error captured at wild card level");
+app.post("/signup", async (req, res) => {
+  const userObj = {
+    firstName: "Dhanvith",
+    lastName: "Dangeti",
+    email: "dhanvith@gmail.com",
+    password: "asd",
+  };
+  const user = new User(userObj);
+  try {
+    await user.save();
+    res.send("User details saved successfully");
+  } catch (error) {
+    console.error("Error occurred while saving user details:", error.message);
+    res.status(400).send("Bad Request: Unable to save user details");
   }
 });
