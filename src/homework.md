@@ -109,3 +109,11 @@
 - create POST /signup api call
 - push some documents to the database with using API call from Postman
 - Always do error handling whenever handling API calls to the database
+
+- JS object vs JSON
+- Add the express.json middleware to your app.js
+- Make your signup API dynamic to receive data from the end user(req.body)
+- User.findOne with duplicate documents(ex: duplicate first name or duplicate email..) --> which document is returned??
+- GET /users API by email/name
+- Feed API - GET /users/feed - get all the users (User.find({})) from the database.
+- Create an API GET user/:id -> User.getById()
