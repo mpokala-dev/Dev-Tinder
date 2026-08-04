@@ -17,23 +17,66 @@ connectDB
     console.log("Database connection failed...", err);
   });
 app.use(express.json());
+// API Level Validation
+const userDataValidationOnSignUpAndUpdate = (
+  requestBody,
+  apiType = "update",
+) => {
+  const ALLOWED_CREATE = [
+    "firstName",
+    "lastName",
+    "email",
+    "password",
+    "age",
+    "about",
+    "location",
+    "gender",
+    "skills",
+    "photoUrl",
+  ];
+  const ALLOWED_UPDATE = [
+    "age",
+    "about",
+    "location",
+    "gender",
+    "skills",
+    "photoUrl",
+  ];
+  const req_body = requestBody;
+  const ALLOW_FIELD_UPDATE =
+    apiType == "create"
+      ? Object.keys(req_body).every((key) => ALLOWED_CREATE.includes(key))
+      : Object.keys(req_body).every((key) => ALLOWED_UPDATE.includes(key));
+  const UPDATESKILLS = req_body?.skills ? req_body.skills?.length <= 10 : true;
+  const UPDATEGENDER = req_body?.gender
+    ? ["male", "female", "others"].includes(req_body.gender)
+    : true;
+  const isUpdateAllowed = ALLOW_FIELD_UPDATE && UPDATESKILLS && UPDATEGENDER;
+  return isUpdateAllowed;
+};
+// POST user API
 app.post("/signup", async (req, res) => {
   const userObj = req.body;
   const user = new User(userObj);
   try {
-    await user.save();
-    res.send("User details saved successfully");
+    if (userDataValidationOnSignUpAndUpdate(userObj, "create")) {
+      await user.save();
+      res.send("User details saved successfully");
+    } else {
+      throw new Error("Cannot Create User Profile with requested details");
+    }
   } catch (error) {
     console.error("Error occurred while saving user details:", error.message);
-    res.status(400).send("Bad Request: Unable to save user details");
+    res
+      .status(400)
+      .send("Bad Request: Unable to save user details::" + error.message);
   }
 });
+// find user API
 app.get("/users", async (req, res) => {
   const userDetails = req.body;
-  console.log("/users", req.body);
   try {
     const users = await User.find(userDetails);
-    console.log("Users found:", users);
     if (users.length === 0) {
       return res.status(404).send("No users found");
     } else {
@@ -46,6 +89,7 @@ app.get("/users", async (req, res) => {
       .send("Internal Server Error: Something went wrong while fetching users");
   }
 });
+// fetch ALL users API
 app.get("/users/feed", async (req, res) => {
   try {
     const users = await User.find({});
@@ -60,6 +104,7 @@ app.get("/users/feed", async (req, res) => {
     res.status(500).send("Something went wrong while fetching users");
   }
 });
+// fetch user by ID
 app.get("/userById", async (req, res) => {
   const userId = req.body?._id ?? null;
   try {
@@ -74,6 +119,7 @@ app.get("/userById", async (req, res) => {
     res.status(500).send("Something went wrong while fetching user");
   }
 });
+// find user by ID and delete
 app.delete("/user", async (req, res) => {
   try {
     const userId = req.body?._id ?? null;
@@ -90,49 +136,33 @@ app.delete("/user", async (req, res) => {
       .send("Internal Server Error: Something went wrong while deleting user");
   }
 });
-app.patch("/user{/:email}", async (req, res) => {
+// logic for updating user by userId from request body / request params
+app.patch("/user{/:id}", async (req, res) => {
   try {
-    const userId = req.body?._id ?? null;
-    const userEmail = req.params?.email ?? null;
-    if (!userEmail) {
-      console.log(
-        "User Email is not provided in the request parameters",
-        req.params,
+    const userId = req.params?.id ?? req.body._id;
+
+    if (!userDataValidationOnSignUpAndUpdate(req.body)) {
+      throw new Error(
+        "Update is not allowed in one or all of the requested fields",
       );
-    } else {
-      console.log("User Email provided in the request parameters:", userEmail);
-      const updateUserByReqParams = await User.findOneAndUpdate(
-        { email: userEmail },
-        req.body,
-        { returnDocument: "after" },
-      );
-      if (!updateUserByReqParams) {
-        return res.status(404).send("User not found for the provided email");
-      } else {
-        console.log(
-          "User updated successfully using request parameters:" +
-            updateUserByReqParams,
-        );
-        res.send(
-          "User updated successfully using request parameters" +
-            updateUserByReqParams,
-        );
-      }
     }
-    // logic for updating user by userId from request body
-    // const updateUser = await User.findByIdAndUpdate(userId, req.body, {
-    //   returnDocument: "after",
-    // });
-    // if (!updateUser) {
-    //   res.status(404).send("User not found");
-    // } else {
-    //   console.log("User updated successfully" + updateUser);
-    // }
+    const updateUser = await User.findByIdAndUpdate(userId, req.body, {
+      returnDocument: "after",
+    });
+    if (!updateUser) {
+      res.status(404).send("User not found");
+    } else {
+      console.log("User updated successfully" + updateUser);
+      res.send("User updated successfully");
+    }
   } catch (error) {
     console.log("Error occurred while updating user:", error.message);
     res
       .status(500)
-      .send("Internal Server Error: Something went wrong while updating user");
+      .send(
+        "Internal Server Error: Something went wrong while updating user" +
+          error.message,
+      );
   }
 });
 app.use("/", (err, req, res, next) => {

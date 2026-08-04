@@ -42,7 +42,8 @@ const userSchema = new Schema(
     },
     about: {
       type: String,
-      default: "this is a place where you describe",
+      default: "this is a place where you describe your self",
+      maxlength: 300,
     },
     location: {
       type: String,

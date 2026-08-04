@@ -139,3 +139,6 @@
   - enum
 
 - Add timestams: true as a second argument to the user Schema so that createdAt and updatedAt timestams are automatically maintained in the MongoDB
+
+- API level validations on PATCH and POST API
+- DATA SANITIZATION -- Add API validation for each field
