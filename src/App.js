@@ -74,6 +74,67 @@ app.get("/userById", async (req, res) => {
     res.status(500).send("Something went wrong while fetching user");
   }
 });
+app.delete("/user", async (req, res) => {
+  try {
+    const userId = req.body?._id ?? null;
+    const deleteUser = await User.findByIdAndDelete(userId);
+    if (!deleteUser) {
+      res.status(404).send("User not found");
+    } else {
+      res.send("User deleted successfully");
+    }
+  } catch (error) {
+    console.log("Error occurred while deleting user:", error.message);
+    res
+      .status(500)
+      .send("Internal Server Error: Something went wrong while deleting user");
+  }
+});
+app.patch("/user{/:email}", async (req, res) => {
+  try {
+    const userId = req.body?._id ?? null;
+    const userEmail = req.params?.email ?? null;
+    if (!userEmail) {
+      console.log(
+        "User Email is not provided in the request parameters",
+        req.params,
+      );
+    } else {
+      console.log("User Email provided in the request parameters:", userEmail);
+      const updateUserByReqParams = await User.findOneAndUpdate(
+        { email: userEmail },
+        req.body,
+        { returnDocument: "after" },
+      );
+      if (!updateUserByReqParams) {
+        return res.status(404).send("User not found for the provided email");
+      } else {
+        console.log(
+          "User updated successfully using request parameters:" +
+            updateUserByReqParams,
+        );
+        res.send(
+          "User updated successfully using request parameters" +
+            updateUserByReqParams,
+        );
+      }
+    }
+    // logic for updating user by userId from request body
+    // const updateUser = await User.findByIdAndUpdate(userId, req.body, {
+    //   returnDocument: "after",
+    // });
+    // if (!updateUser) {
+    //   res.status(404).send("User not found");
+    // } else {
+    //   console.log("User updated successfully" + updateUser);
+    // }
+  } catch (error) {
+    console.log("Error occurred while updating user:", error.message);
+    res
+      .status(500)
+      .send("Internal Server Error: Something went wrong while updating user");
+  }
+});
 app.use("/", (err, req, res, next) => {
   res
     .status(500)

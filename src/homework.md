@@ -117,3 +117,9 @@
 - GET /users API by email/name
 - Feed API - GET /users/feed - get all the users (User.find({})) from the database.
 - Create an API GET user/:id -> User.getById()
+
+- Create a DELETE API by id --> User.findByIdAndDelete()
+- Create an UPDATE API by id --> User.findByIdAndUpdate() == findOneAndUpdate()[only difference is it can take any key param not just id]
+- explore options param in findByIdAndUpdate()
+- explore the Mongoose documentation for Model specifically
+- update the user details by referencing it to the email id from the request params.(findOneAndUpdate({condition}, update, {options}))
