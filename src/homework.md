@@ -144,3 +144,4 @@
 - DATA SANITIZATION -- Add API validation for each field
 
 - Add validator library (npm i validator) to validate schema level(email validation) or API level validation(can do same validations on API level as well instead of Schema level sanitization)
+- Explore validator library for more validation applicabilities
