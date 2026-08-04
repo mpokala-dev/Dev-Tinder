@@ -123,3 +123,19 @@
 - explore options param in findByIdAndUpdate()
 - explore the Mongoose documentation for Model specifically
 - update the user details by referencing it to the email id from the request params.(findOneAndUpdate({condition}, update, {options}))
+
+- add appropriate schema validations
+  - required,
+  - unique,
+  - trim(Mongoose's trim: true only removes leading and trailing whitespace.),
+  - min(only for type: Number),
+  - minlength,
+  - maxlength,
+  - set(returns the value and sets as per the condition),
+    -- set: value => value.replace(/\s+/g, "")
+  - match(validate as per the regex )
+    -- match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"]
+  - default
+  - enum
+
+- Add timestams: true as a second argument to the user Schema so that createdAt and updatedAt timestams are automatically maintained in the MongoDB
