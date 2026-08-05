@@ -1,8 +1,13 @@
 console.log("Hello, DevTinder!");
 const express = require("express");
+const bcrypt = require("bcrypt");
 const connectDB = require("./config/database");
-const { getMaxListeners } = require("./models/user");
 const User = require("./models/user");
+const {
+  userDataValidationOnSignUpAndUpdate,
+  validateSignup,
+} = require("./utils/validations");
+const { isEmail } = require("validator");
 const app = express();
 
 connectDB
@@ -18,58 +23,50 @@ connectDB
   });
 app.use(express.json());
 // API Level Validation
-const userDataValidationOnSignUpAndUpdate = (
-  requestBody,
-  apiType = "update",
-) => {
-  const ALLOWED_CREATE = [
-    "firstName",
-    "lastName",
-    "email",
-    "password",
-    "age",
-    "about",
-    "location",
-    "gender",
-    "skills",
-    "photoUrl",
-  ];
-  const ALLOWED_UPDATE = [
-    "age",
-    "about",
-    "location",
-    "gender",
-    "skills",
-    "photoUrl",
-  ];
-  const req_body = requestBody;
-  const ALLOW_FIELD_UPDATE =
-    apiType == "create"
-      ? Object.keys(req_body).every((key) => ALLOWED_CREATE.includes(key))
-      : Object.keys(req_body).every((key) => ALLOWED_UPDATE.includes(key));
-  const UPDATESKILLS = req_body?.skills ? req_body.skills?.length <= 10 : true;
-  const UPDATEGENDER = req_body?.gender
-    ? ["male", "female", "others"].includes(req_body.gender)
-    : true;
-  const isUpdateAllowed = ALLOW_FIELD_UPDATE && UPDATESKILLS && UPDATEGENDER;
-  return isUpdateAllowed;
-};
-// POST user API
+
+// signup user API
 app.post("/signup", async (req, res) => {
-  const userObj = req.body;
-  const user = new User(userObj);
   try {
-    if (userDataValidationOnSignUpAndUpdate(userObj, "create")) {
+    validateSignup(req);
+    const { firstName, lastName, email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+    });
+    if (userDataValidationOnSignUpAndUpdate(user, "create")) {
       await user.save();
       res.send("User details saved successfully");
     } else {
       throw new Error("Cannot Create User Profile with requested details");
     }
   } catch (error) {
-    console.error("Error occurred while saving user details:", error.message);
-    res
-      .status(400)
-      .send("Bad Request: Unable to save user details::" + error.message);
+    res.status(400).send("Bad Request: " + error.message);
+  }
+});
+// login user API
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!isEmail(email)) {
+      throw new Error("Invalid email address");
+    } else {
+      const user = await User.findOne({ email: email });
+      if (!user) {
+        throw new Error("User not found");
+      } else {
+        const isPasswordMatched = await bcrypt.compare(password, user.password);
+        if (isPasswordMatched) {
+          res.send("User Login Successfull!!");
+        } else {
+          res.status(401).send("Password Incorrect");
+        }
+      }
+    }
+  } catch (error) {
+    res.status(500).send("Something went wrong: " + error.message);
   }
 });
 // find user API

@@ -30,6 +30,7 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
+      minlength: 3,
       required: true,
     },
     age: {
@@ -56,6 +57,7 @@ const userSchema = new Schema(
     },
     skills: {
       type: [String],
+      maxlength: 10,
     },
     photoUrl: {
       type: String,
