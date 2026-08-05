@@ -55,13 +55,13 @@ app.post("/login", async (req, res) => {
     } else {
       const user = await User.findOne({ email: email });
       if (!user) {
-        throw new Error("User not found");
+        throw new Error("Invalid Credentials");
       } else {
         const isPasswordMatched = await bcrypt.compare(password, user.password);
         if (isPasswordMatched) {
           res.send("User Login Successfull!!");
         } else {
-          res.status(401).send("Password Incorrect");
+          res.status(401).send("Invalid Credentials");
         }
       }
     }
