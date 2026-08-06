@@ -1,6 +1,8 @@
 console.log("Hello, DevTinder!");
 const express = require("express");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 const connectDB = require("./config/database");
 const User = require("./models/user");
 const {
@@ -8,6 +10,7 @@ const {
   validateSignup,
 } = require("./utils/validations");
 const { isEmail } = require("validator");
+const { SCECRET_KEY } = require("./config/env");
 const app = express();
 
 connectDB
@@ -22,6 +25,7 @@ connectDB
     console.log("Database connection failed...", err);
   });
 app.use(express.json());
+app.use(cookieParser());
 // API Level Validation
 
 // signup user API
@@ -59,6 +63,8 @@ app.post("/login", async (req, res) => {
       } else {
         const isPasswordMatched = await bcrypt.compare(password, user.password);
         if (isPasswordMatched) {
+          var token = await jwt.sign({ _id: user._id }, SCECRET_KEY);
+          res.cookie("token", token);
           res.send("User Login Successfull!!");
         } else {
           res.status(401).send("Invalid Credentials");
@@ -67,6 +73,23 @@ app.post("/login", async (req, res) => {
     }
   } catch (error) {
     res.status(500).send("Something went wrong: " + error.message);
+  }
+});
+app.get("/profile", async (req, res) => {
+  try {
+    const { token } = req.cookies;
+    if (!token) {
+      throw new Error("Invalid Token. Please login again.");
+    }
+    var decoded = await jwt.verify(token, SCECRET_KEY);
+    const user = await User.findById({ _id: decoded._id });
+    if (!user) {
+      throw new Error("User not found");
+    } else {
+      res.send(user);
+    }
+  } catch (error) {
+    res.status(500).send("ERROR: " + error.message);
   }
 });
 // find user API

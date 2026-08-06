@@ -153,3 +153,30 @@
 - Create login POST API with validations(compare user password match using bcrypt compare)
   - await bcrypt.compare(password, hash); // hash is the user created password during signup which is stored in hash format in the DB
 - DONOT LEAK INFORMATION i.e, if email id is not present in the DB, we should not use the very straight forward message that "the email id is not present or not registered in the DB" it will lead to leak of information to the hackers. So its good to give generic info like "Invalid Credentials" from which hackers would not know whether email is invalid or password or both. And the user with authorized details will always enter valid credentials or even have the opportunity to reset the credentials.
+
+---
+
+- Install cookie-parser
+- send dummy cookie to user
+  <pre>
+    res.cookie()
+  </pre>
+- Create GET /profile API and check if you get the cookie back
+- Install jsonwebtoken(npm i jsonwebtoken)
+- In /login API, after successful email and password validation, create a JWT token
+  <pre>
+    var jwt = require('jsonwebtoken');
+    var token = jwt.sign({ foo: 'bar' }, 'shhhhh'); //{ foo: 'bar' } is the payload encrypted and stored in the token and 'shhhhh' is the SECRET_KEY
+  </pre>
+- call /profile API of the logged in user to fetch the user document from DB
+    <pre>
+    here the user details are verified against the cookie token 
+  
+      var decoded = jwt.verify(token, 'shhhhh');
+    
+    now the decoded will have the payload we set during the JWT generation. ex: { _id: user._id } or { foo: 'bar' }
+  
+    with the decoded boject or string we can fetch the user from the User model
+  
+      const user = User.findById(decoded._id);
+     </pre>
