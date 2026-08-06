@@ -2,7 +2,6 @@ console.log("Hello, DevTinder!");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
 const connectDB = require("./config/database");
 const User = require("./models/user");
 const {
@@ -62,11 +61,9 @@ app.post("/login", async (req, res) => {
       if (!user) {
         throw new Error("Invalid Credentials");
       } else {
-        const isPasswordMatched = await bcrypt.compare(password, user.password);
+        const isPasswordMatched = await user.validatePassword(password);
         if (isPasswordMatched) {
-          var token = await jwt.sign({ _id: user._id }, SCECRET_KEY, {
-            expiresIn: "1h",
-          }); // jwt expires in 1 hr
+          var token = await user.getJWT();
           res.cookie("token", token, {
             expires: new Date(Date.now() + 7 * 3600000),
           }); // cookie expires in 7 days

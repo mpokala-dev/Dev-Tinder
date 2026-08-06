@@ -185,8 +185,20 @@
       const user = User.findById(decoded._id);
      </pre>
 
----
-
 - User Auth middleware
-- Add useAuth middleware in /profile API and a new POST /sendConnectionRequest API
+- Add userAuth middleware in /profile API and a new POST /sendConnectionRequest API so that only if userAuthmiddleware is valid the next() allwos the next request handler function.
 - set the expiry of JWT(expiresIn:"1h | 1d | ...") token and cookies(<code>expires: new Date(Date.now() + 7 \* 3600000)</code>) to 7 days
+
+- Attach methods to User Schema so that we can offload methods like JWT and bcrypt to UserSchema instead of their logic in the APP.js file
+  <pre>
+    userSchema.methods.<nameOfTheFunction> = async function () {
+      await jwt.sign({payload}, "secret", {options})
+    }
+    // do not use arrow functions cause when we refer the "this" object, the arrow functions will break as they do not have this keyword refering within. //read "this" keyword in JS arrow functions 
+  </pre>
+
+- Create user schema methods to generate JWT
+- Create user schema methods to compare login password and hashed password during signup by the use
+- Code refactor App.js using user schema methods
+
+---
