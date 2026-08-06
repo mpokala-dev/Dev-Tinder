@@ -148,10 +148,14 @@
 
 - Validation of all the details, Password encryption(npm i bcrypt) for /signup API
 - hash the password and save the user with encrypted password.
+<pre>
   - await bcrypt.hash("password", saltrounds) //salt is a random lengthy string generated for the password by bcrypt and rounds is the no. of iterations or rounds to be performed on the generated salt so that it is encrypted.
+</pre>
 - Explore bcrypt library.
 - Create login POST API with validations(compare user password match using bcrypt compare)
+<pre>
   - await bcrypt.compare(password, hash); // hash is the user created password during signup which is stored in hash format in the DB
+</pre>
 - DONOT LEAK INFORMATION i.e, if email id is not present in the DB, we should not use the very straight forward message that "the email id is not present or not registered in the DB" it will lead to leak of information to the hackers. So its good to give generic info like "Invalid Credentials" from which hackers would not know whether email is invalid or password or both. And the user with authorized details will always enter valid credentials or even have the opportunity to reset the credentials.
 
 ---
@@ -180,3 +184,9 @@
   
       const user = User.findById(decoded._id);
      </pre>
+
+---
+
+- User Auth middleware
+- Add useAuth middleware in /profile API and a new POST /sendConnectionRequest API
+- set the expiry of JWT(expiresIn:"1h | 1d | ...") token and cookies(<code>expires: new Date(Date.now() + 7 \* 3600000)</code>) to 7 days

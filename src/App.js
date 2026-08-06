@@ -11,6 +11,7 @@ const {
 } = require("./utils/validations");
 const { isEmail } = require("validator");
 const { SCECRET_KEY } = require("./config/env");
+const { userAuthMiddleware } = require("./middlewares/auth");
 const app = express();
 
 connectDB
@@ -63,11 +64,15 @@ app.post("/login", async (req, res) => {
       } else {
         const isPasswordMatched = await bcrypt.compare(password, user.password);
         if (isPasswordMatched) {
-          var token = await jwt.sign({ _id: user._id }, SCECRET_KEY);
-          res.cookie("token", token);
+          var token = await jwt.sign({ _id: user._id }, SCECRET_KEY, {
+            expiresIn: "1h",
+          }); // jwt expires in 1 hr
+          res.cookie("token", token, {
+            expires: new Date(Date.now() + 7 * 3600000),
+          }); // cookie expires in 7 days
           res.send("User Login Successfull!!");
         } else {
-          res.status(401).send("Invalid Credentials");
+          res.status(400).send("Invalid Credentials");
         }
       }
     }
@@ -75,19 +80,20 @@ app.post("/login", async (req, res) => {
     res.status(500).send("Something went wrong: " + error.message);
   }
 });
-app.get("/profile", async (req, res) => {
+// profile API
+app.get("/profile", userAuthMiddleware, (req, res) => {
   try {
-    const { token } = req.cookies;
-    if (!token) {
-      throw new Error("Invalid Token. Please login again.");
-    }
-    var decoded = await jwt.verify(token, SCECRET_KEY);
-    const user = await User.findById({ _id: decoded._id });
-    if (!user) {
-      throw new Error("User not found");
-    } else {
-      res.send(user);
-    }
+    const { user } = req;
+    res.send(user);
+  } catch (error) {
+    res.status(500).send("ERROR: " + error.message);
+  }
+});
+// send connection request API
+app.post("/sendConnectRequest", userAuthMiddleware, (req, res) => {
+  try {
+    const { user } = req;
+    res.send(user.firstName + " sent connection request");
   } catch (error) {
     res.status(500).send("ERROR: " + error.message);
   }
