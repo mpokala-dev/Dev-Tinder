@@ -23,9 +23,9 @@ app.use(express.json());
 app.use(cookieParser());
 /* API Level Validation */
 
-app.use("/", authRouter); // signup user API // login user API
+app.use("/", authRouter); // signup user API // login user API // logout user API
 
-app.use("/", profileRouter); // profile API - logic for updating user by userId from request body | request params // logout user API
+app.use("/", profileRouter); // profile API - logic for updating user by userId from request body | request params
 
 app.use("/", requestRoute); // send connection request API
 

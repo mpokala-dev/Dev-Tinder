@@ -46,16 +46,4 @@ profileRoute.patch("/profile{/:id}", userAuthMiddleware, async (req, res) => {
   }
 });
 
-// logout user API
-profileRoute.post("/logout", userAuthMiddleware, async (req, res) => {
-  try {
-    res.clearCookie(token);
-    res.send("User logged out successfully");
-  } catch (error) {
-    res
-      .status(500)
-      .send("Internal Server Error: Unable to logout " + error.message);
-  }
-});
-
 module.exports = profileRoute;

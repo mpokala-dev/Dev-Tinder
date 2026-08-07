@@ -69,4 +69,17 @@ authRouter.post("/login", async (req, res) => {
   }
 });
 
+// logout user API
+authRouter.post("/logout", async (req, res) => {
+  try {
+    // res.cookie("token", null, { expires: new Date(Date.now()) });
+    res.clearCookie("token");
+    res.send("User logged out successfully");
+  } catch (error) {
+    res
+      .status(500)
+      .send("Internal Server Error: Unable to logout " + error.message);
+  }
+});
+
 module.exports = authRouter;
