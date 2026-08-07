@@ -1,4 +1,4 @@
-const { isEmail, isStrongPassword } = require("validator");
+const { isEmail, isStrongPassword, isInt } = require("validator");
 
 const userDataValidationOnSignUpAndUpdate = (
   requestBody,
@@ -22,10 +22,12 @@ const userDataValidationOnSignUpAndUpdate = (
   const UPDATEGENDER = req_body?.gender
     ? ["male", "female", "others"].includes(req_body.gender)
     : true;
-  console.log(ALLOW_FIELD_UPDATE);
-  console.log(UPDATESKILLS);
-  console.log(UPDATEGENDER);
-  const isUpdateAllowed = ALLOW_FIELD_UPDATE && UPDATESKILLS && UPDATEGENDER;
+  console.log(req_body);
+  const VALIDAGE = requestBody?.age
+    ? isInt(requestBody.age) && requestBody?.age >= 18
+    : true;
+  const isUpdateAllowed =
+    ALLOW_FIELD_UPDATE && UPDATESKILLS && UPDATEGENDER && VALIDAGE;
   return isUpdateAllowed;
 };
 

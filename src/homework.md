@@ -202,3 +202,8 @@
 - Code refactor App.js using user schema methods
 
 ---
+
+- Explore Expressjs Documentation for Router(express.route())
+- Create routes folder for managing different routers
+- Create authRouter, profileRouter, requestRouter
+- Import these routes in App.js

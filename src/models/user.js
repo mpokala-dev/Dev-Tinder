@@ -39,6 +39,10 @@ const userSchema = new Schema(
     age: {
       type: Number,
       min: [18, "Age should be above 18"],
+      validate: function (value) {
+        return value >= 18;
+      },
+      message: "Age should be 18 or above",
     },
     gender: {
       type: String,
