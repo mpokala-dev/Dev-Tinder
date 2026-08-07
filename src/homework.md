@@ -206,4 +206,7 @@
 - Explore Expressjs Documentation for Router(express.route())
 - Create routes folder for managing different routers
 - Create authRouter, profileRouter, requestRouter
-- Import these routes in App.js
+- Import these routers in App.js
+- Create POST /logout API and PATCH /profile/update API
+- Create a PATCH /profile/passwordReset // forgot password API
+- - res.send() or res.json does the same, only contenttype on the headers would change with "/json" or "html/text" respectively

@@ -4,8 +4,8 @@ const bcrypt = require("bcrypt");
 
 const { isEmail } = require("validator");
 const {
-  userDataValidationOnSignUpAndUpdate,
   validateSignup,
+  userDataValidationOnSignup,
 } = require("../utils/validations");
 const User = require("../models/user");
 const authRouter = express.Router();
@@ -17,15 +17,15 @@ authRouter.post("/signup", async (req, res) => {
 
     validateSignup(req);
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-    });
+    if (userDataValidationOnSignup(req.body)) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = new User({
+        firstName,
+        lastName,
+        email,
+        password: hashedPassword,
+      });
 
-    if (userDataValidationOnSignUpAndUpdate(user, "create")) {
       await user.save();
       res.send("User details saved successfully");
     } else {

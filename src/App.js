@@ -2,10 +2,7 @@ console.log("Hello, DevTinder!");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/database");
-const User = require("./models/user");
-const authRouter = require("./routes/auth");
-const profileRouter = require("./routes/profile");
-const requestRoute = require("./routes/request");
+
 const app = express();
 
 connectDB
@@ -22,6 +19,10 @@ connectDB
 app.use(express.json());
 app.use(cookieParser());
 /* API Level Validation */
+const User = require("./models/user");
+const authRouter = require("./routes/auth");
+const profileRouter = require("./routes/profile");
+const requestRoute = require("./routes/request");
 
 app.use("/", authRouter); // signup user API // login user API // logout user API
 
