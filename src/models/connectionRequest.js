@@ -4,10 +4,12 @@ const connectionRequestSchema = new mongoose.Schema(
   {
     fromUserId: {
       type: mongoose.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     toUserId: {
       type: mongoose.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     status: {
@@ -26,12 +28,11 @@ const connectionRequestSchema = new mongoose.Schema(
 
 connectionRequestSchema.index({ toUserId: 1, fromUserId: 1 }); //indexing makes the DB search faster.. over indexing by indexing unneccesary fields will decrease the DB performance
 
-connectionRequestSchema.pre("save", function (next) {
+connectionRequestSchema.pre("save", function () {
   const connectionRequest = this;
   if (connectionRequest.toUserId.equals(connectionRequest.fromUserId)) {
     throw new Error("Cannot send request to yourself");
   }
-  next();
 });
 
 module.exports = mongoose.model("ConnectionRequest", connectionRequestSchema);

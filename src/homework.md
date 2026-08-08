@@ -241,4 +241,13 @@
 
 - Create POST API for review request with proper API data validations
     <pre> /request/review/:status/:requestId</pre>
+
   for status as <i>accepted and rejected</i>(once a request is sent, the receiver of the request can review the request and accept or reject it)
+
+- Thought process of GET vs POST
+- Read about ref and populate (used to create relation between two collections)in mongoose schema
+
+  ref - ref:"User" as a field in the schema builds relation between the connectionRequests Collection and users Collection
+
+  populate - Doc.populate("field_Name_OF_connectionRequests", ["fields","which","are","to","populate","on","api","call"])
+  can also be written as Doc.populate("field_Name_OF_connectionRequests", "fields which are to populate on api call")<!--space between the fields to populate acts as a seperator -->
