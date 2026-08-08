@@ -210,3 +210,35 @@
 - Create POST /logout API and PATCH /profile/update API
 - Create a PATCH /profile/passwordReset // forgot password API
 - - res.send() or res.json does the same, only contenttype on the headers would change with "/json" or "html/text" respectively
+
+---
+
+- Create Connection Request Schema
+    <pre>
+    fromId: {
+      type: mongoose.Types.ObjectId, // fromId holds the _id of a user document
+    },
+    status:{
+      type: String,
+      enum:{
+      values: ["ignored", "interested", "accepted", "rejected"],
+      message: `{VALUE} is not a valid request status type`
+      }
+    }
+    </pre>
+- Create POST send Connection Request API
+    <pre> /request/send/:status/:userId </pre>
+  for the status <i>ignored and interested</i>(from the logged in user a request can be sent(as an interest) and also a request that is received can be ignored)
+- MongoDB $or and $and queries in filtering the User model based the conditions in $or
+  <pre> - logical queries in MongoDB</pre>
+- schema.pre("save", function () {// things to validate, or do, or anything before saving the document})
+- unique: true vs index: true - index | unique index | sparse index
+- Read more about MongoDB indexes
+- Why do you need index in DB?
+- What are the advantages and disadvantages of creating indexes in DB?
+- What are compound index in MongoDB
+- <b>ALWAYS THINK ABOUT CORNER CASES</b> cause attackers can feed in any data in the api and polute the DB.
+
+- Create POST API for review request with proper API data validations
+    <pre> /request/review/:status/:requestId</pre>
+  for status as <i>accepted and rejected</i>(once a request is sent, the receiver of the request can review the request and accept or reject it)
