@@ -251,3 +251,7 @@
 
   populate - Doc.populate("field_Name_OF_connectionRequests", ["fields","which","are","to","populate","on","api","call"])
   can also be written as Doc.populate("field_Name_OF_connectionRequests", "fields which are to populate on api call")<!--space between the fields to populate acts as a seperator -->
+
+---
+
+- Create GET user/feed API with validations

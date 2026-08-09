@@ -1,6 +1,7 @@
 const express = require("express");
 const { userAuthMiddleware } = require("../middlewares/auth");
 const ConnectionRequests = require("../models/connectionRequest");
+const User = require("../models/user");
 
 const userRouter = express.Router();
 // request received by user that are pending review
@@ -75,4 +76,33 @@ userRouter.get("/user/connections", userAuthMiddleware, async (req, res) => {
   }
 });
 
+//users feed
+userRouter.get("/user/feed", userAuthMiddleware, async (req, res) => {
+  try {
+    const loggedinUser = req.user;
+    const hideUsersFromFeed = new Set();
+    const connections = await ConnectionRequests.find({
+      $or: [{ toUserId: loggedinUser._id }, { fromUserId: loggedinUser._id }],
+    });
+
+    connections.length > 0 &&
+      connections.forEach((connection) => {
+        hideUsersFromFeed.add(connection.toUserId.toString());
+        hideUsersFromFeed.add(connection.fromUserId.toString());
+      });
+
+    const usersFeed = await User.find({
+      $and: [
+        { _id: { $nin: Array.from(hideUsersFromFeed) } },
+        { _id: { $ne: loggedinUser._id } },
+      ],
+    }).select("firstName lastName about age skills location gender photoUrl");
+    res.json({
+      message: `${loggedinUser.firstName} has ${usersFeed.length} feed(s) to view`,
+      data: usersFeed,
+    });
+  } catch (error) {
+    res.status(400).send("Error:: " + error.message);
+  }
+});
 module.exports = userRouter;
