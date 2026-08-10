@@ -7,6 +7,7 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRoute = require("./routes/request");
 const userRouter = require("./routes/user");
+const cors = require("cors");
 
 const app = express();
 
@@ -21,6 +22,10 @@ connectDB
   .catch((err) => {
     console.log("Database connection failed...", err);
   });
+
+const corsOptions = { origin: "http://localhost:5173", credentials: true };
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(cookieParser());
 /* API Level Validation */

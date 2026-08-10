@@ -80,6 +80,10 @@ userRouter.get("/user/connections", userAuthMiddleware, async (req, res) => {
 userRouter.get("/user/feed", userAuthMiddleware, async (req, res) => {
   try {
     const loggedinUser = req.user;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit > 20 ? 20 : limit; // limit is limited to 20 or less so that API would not lag DB performance by fetching huge sets of data
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * limit;
     const hideUsersFromFeed = new Set();
     const connections = await ConnectionRequests.find({
       $or: [{ toUserId: loggedinUser._id }, { fromUserId: loggedinUser._id }],
@@ -96,7 +100,10 @@ userRouter.get("/user/feed", userAuthMiddleware, async (req, res) => {
         { _id: { $nin: Array.from(hideUsersFromFeed) } },
         { _id: { $ne: loggedinUser._id } },
       ],
-    }).select("firstName lastName about age skills location gender photoUrl");
+    })
+      .select("firstName lastName about age skills location gender photoUrl")
+      .skip(skip)
+      .limit(limit);
     res.json({
       message: `${loggedinUser.firstName} has ${usersFeed.length} feed(s) to view`,
       data: usersFeed,

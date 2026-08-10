@@ -22,15 +22,15 @@ profileRoute.patch("/profile/update", userAuthMiddleware, async (req, res) => {
     const { _id } = req.user;
 
     if (!userDataValidationOnUpdate(req.body)) {
-      throw new Error(
-        "Update is not allowed in one or all of the requested fields",
-      );
+      return res
+        .status(400)
+        .send("Update is not allowed in one or all of the requested fields");
     }
     const updateUser = await User.findByIdAndUpdate(_id, req.body, {
       returnDocument: "after",
     });
     if (!updateUser) {
-      res.status(404).send("User not found");
+      return res.status(404).send("User not found");
     } else {
       return res.json({
         message: "User updated successfully",
@@ -38,7 +38,6 @@ profileRoute.patch("/profile/update", userAuthMiddleware, async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("Error occurred while updating user:", error.message);
     res
       .status(500)
       .send(

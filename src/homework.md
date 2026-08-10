@@ -255,3 +255,24 @@
 ---
 
 - Create GET user/feed API with validations
+- Add Pagination to fee API <!-- .skip() .limit() -->
+
+---
+
+- install cors library
+    <pre><code>npm i cors</code></pre>
+- add cors() middleware to App.js
+  <pre>
+    <code>
+      app.use(cors()); <!-- Adds headers: Access-Control-Allow-Origin: * -->
+    </code>
+  </pre>
+- add options to cors ==> {origin: "", credentials: true}
+    <pre>
+      <code>
+        app.use(cors({
+                        origin: "url of UI for the backend to identify where the UI/frontend is running",
+                        credentials: true
+                      }));
+      </code>
+    </pre>

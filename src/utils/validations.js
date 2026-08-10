@@ -39,18 +39,11 @@ const userDataValidationOnUpdate = (req) => {
     ? ["male", "female", "others"].includes(requestBody.gender)
     : true;
   const VALIDAGE = requestBody?.age
-    ? isInt(requestBody.age) && requestBody?.age >= 18
+    ? isInt(requestBody.age.toString()) && requestBody?.age >= 18
     : true;
   const isUpdateAllowed =
     ALLOW_FIELD_UPDATE && UPDATESKILLS && UPDATEGENDER && VALIDAGE && VALIDNAME;
 
-  console.log(
-    ALLOW_FIELD_UPDATE,
-    UPDATESKILLS,
-    UPDATEGENDER,
-    VALIDAGE,
-    VALIDNAME,
-  );
   return isUpdateAllowed;
 };
 
