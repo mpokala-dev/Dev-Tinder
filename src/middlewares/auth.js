@@ -16,7 +16,9 @@ const userAuthMiddleware = async (req, res, next) => {
   try {
     const { token } = req.cookies;
     if (!token) {
-      throw new Error("Invalid Token. Please login again.");
+      return res
+        .status(401)
+        .send({ message: "Invalid Token. Please login again." });
     }
     const decoded = await jwt.verify(token, SCECRET_KEY);
     const { _id } = decoded;
@@ -32,7 +34,7 @@ const userAuthMiddleware = async (req, res, next) => {
       next();
     }
   } catch (error) {
-    res.status(400).send("ERROR:: " + error.message);
+    res.status(400).send({ message: "ERROR:: " + error.message });
   }
 };
 

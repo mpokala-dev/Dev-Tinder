@@ -32,7 +32,7 @@ authRouter.post("/signup", async (req, res) => {
       throw new Error("Cannot Create User Profile with requested details");
     }
   } catch (error) {
-    res.status(400).send("Bad Request: " + error.message);
+    res.status(400).send({ message: "Bad Request: " + error.message });
   }
 });
 
@@ -41,13 +41,15 @@ authRouter.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!isEmail(email)) {
-      throw new Error("Invalid email address");
+    if (!isEmail(email) || !password) {
+      return res
+        .status(400)
+        .send({ message: "ERROR: Please enter valid credentials" });
     } else {
       const user = await User.findOne({ email: email });
 
       if (!user) {
-        throw new Error("Invalid Credentials");
+        return res.status(404).send({ message: "User not found" });
       } else {
         const isPasswordMatched = await user.validatePassword(password);
 
@@ -58,14 +60,14 @@ authRouter.post("/login", async (req, res) => {
             expires: new Date(Date.now() + 7 * 3600000),
           }); // cookie expires in 7 days
 
-          res.json({ message: "User Login Successfull!!", data: user });
+          res.send(user);
         } else {
-          res.status(400).send("Invalid Credentials");
+          res.status(400).send({ message: "Invalid Credentials" });
         }
       }
     }
   } catch (error) {
-    res.status(500).send("Something went wrong: " + error.message);
+    res.status(500).send({ message: "ERROR: " + error.message });
   }
 });
 
@@ -74,11 +76,11 @@ authRouter.post("/logout", async (req, res) => {
   try {
     // res.cookie("token", null, { expires: new Date(Date.now()) });
     res.clearCookie("token");
-    res.send("User logged out successfully");
+    res.send({ message: "User logged out successfully" });
   } catch (error) {
-    res
-      .status(500)
-      .send("Internal Server Error: Unable to logout " + error.message);
+    res.status(500).send({
+      message: "Internal Server Error: Unable to logout " + error.message,
+    });
   }
 });
 
