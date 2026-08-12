@@ -16,9 +16,7 @@ const userAuthMiddleware = async (req, res, next) => {
   try {
     const { token } = req.cookies;
     if (!token) {
-      return res
-        .status(401)
-        .send({ message: "Invalid Token. Please login again." });
+      return res.status(401).send({ message: "Please login." });
     }
     const decoded = await jwt.verify(token, SCECRET_KEY);
     const { _id } = decoded;
@@ -29,7 +27,6 @@ const userAuthMiddleware = async (req, res, next) => {
     if (!user) {
       throw new Error("User not found");
     } else {
-      console.log("Autorized User access");
       req.user = user;
       next();
     }

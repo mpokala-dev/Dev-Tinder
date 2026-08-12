@@ -35,7 +35,7 @@ userRouter.get(
         data: pendingConnectionRequests,
       });
     } catch (error) {
-      res.status(500).send("Error: " + error.message);
+      res.status(500).send({ message: "Error: " + error.message });
     }
   },
 );
@@ -72,7 +72,7 @@ userRouter.get("/user/connections", userAuthMiddleware, async (req, res) => {
       data: data,
     });
   } catch (error) {
-    res.status(500).send("Error: " + error.message);
+    res.status(500).send({ message: "Error: " + error.message });
   }
 });
 
@@ -109,7 +109,7 @@ userRouter.get("/user/feed", userAuthMiddleware, async (req, res) => {
       data: usersFeed,
     });
   } catch (error) {
-    res.status(400).send("Error:: " + error.message);
+    res.status(400).send({ message: "Error:: " + error.message });
   }
 });
 module.exports = userRouter;

@@ -12,7 +12,7 @@ profileRoute.get("/profile/view", userAuthMiddleware, (req, res) => {
     const { user } = req;
     res.send(user);
   } catch (error) {
-    res.status(500).send("ERROR: " + error.message);
+    res.status(500).send({ message: "ERROR: " + error.message });
   }
 });
 
@@ -22,15 +22,15 @@ profileRoute.patch("/profile/update", userAuthMiddleware, async (req, res) => {
     const { _id } = req.user;
 
     if (!userDataValidationOnUpdate(req.body)) {
-      return res
-        .status(400)
-        .send("Update is not allowed in one or all of the requested fields");
+      return res.status(400).send({
+        message: "Update is not allowed in one or all of the requested fields",
+      });
     }
     const updateUser = await User.findByIdAndUpdate(_id, req.body, {
       returnDocument: "after",
     });
     if (!updateUser) {
-      return res.status(404).send("User not found");
+      return res.status(404).send({ message: "User not found" });
     } else {
       return res.json({
         message: "User updated successfully",
@@ -38,12 +38,11 @@ profileRoute.patch("/profile/update", userAuthMiddleware, async (req, res) => {
       });
     }
   } catch (error) {
-    res
-      .status(500)
-      .send(
+    res.status(500).send({
+      message:
         "Internal Server Error: Something went wrong while updating user" +
-          error.message,
-      );
+        error.message,
+    });
   }
 });
 
@@ -70,9 +69,9 @@ profileRoute.patch("/passwordReset", userAuthMiddleware, async (req, res) => {
       });
     }
   } catch (error) {
-    res
-      .status(500)
-      .send("Something went wrong, please try again. " + error.message);
+    res.status(500).send({
+      message: "Something went wrong, please try again. " + error.message,
+    });
   }
 });
 
