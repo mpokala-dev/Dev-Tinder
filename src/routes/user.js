@@ -28,7 +28,10 @@ userRouter.get(
         ],
       );
       if (pendingConnectionRequests.length == 0) {
-        return res.json({ message: "There are no pending requests." });
+        return res.json({
+          message: "There are no pending requests.",
+          data: pendingConnectionRequests,
+        });
       }
       res.json({
         message: "Data fetched successfully",
@@ -58,6 +61,7 @@ userRouter.get("/user/connections", userAuthMiddleware, async (req, res) => {
     if (activeConnections.length == 0) {
       return res.json({
         message: `${loggedinUser.firstName} do not have any active connections yet!`,
+        data: activeConnections,
       });
     }
     data = activeConnections.map((obj) => {

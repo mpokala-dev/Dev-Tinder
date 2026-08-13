@@ -27,12 +27,12 @@ authRouter.post("/signup", async (req, res) => {
       });
 
       await user.save();
-      res.send("User details saved successfully");
+      res.status(200).json({ message: "User details saved successfully" });
     } else {
       throw new Error("Cannot Create User Profile with requested details");
     }
   } catch (error) {
-    res.status(400).send({ message: "Bad Request: " + error.message });
+    res.status(400).json({ message: "Bad Request: " + error.message });
   }
 });
 
