@@ -109,7 +109,10 @@ userRouter.get("/user/feed", userAuthMiddleware, async (req, res) => {
       .skip(skip)
       .limit(limit);
     res.json({
-      message: `${loggedinUser.firstName} has ${usersFeed.length} feed(s) to view`,
+      message:
+        usersFeed.length === 0
+          ? `${loggedinUser.firstName}, has ${usersFeed.length} feeds to view`
+          : `${loggedinUser.firstName}, here is your feed(s) to view`,
       data: usersFeed,
     });
   } catch (error) {

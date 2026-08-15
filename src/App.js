@@ -1,4 +1,5 @@
 console.log("Hello, DevTinder!");
+require("dotenv").config();
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/database");
@@ -11,12 +12,12 @@ const cors = require("cors");
 
 const app = express();
 
-connectDB
+connectDB()
   .then((req, res) => {
     console.log("Database connection established...");
     // Server should start listening to any requests only after connecting to the Database first.
-    app.listen(3000, () => {
-      console.log("Server is running on port 3000");
+    app.listen(process.env.PORT, () => {
+      console.log(`Server is running on port ${process.env.PORT}`);
     });
   })
   .catch((err) => {

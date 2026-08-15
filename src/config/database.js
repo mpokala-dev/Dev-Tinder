@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
-const { DB_URI } = require("./env");
-const connectDB = mongoose.connect(DB_URI);
+const connectDB = async () => {
+  console.log(process.env.DB_URI);
+  await mongoose.connect(process.env.DB_URI);
+};
 
 module.exports = connectDB;

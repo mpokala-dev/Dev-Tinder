@@ -1,4 +1,3 @@
-const { SCECRET_KEY } = require("../config/env");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
@@ -18,7 +17,7 @@ const userAuthMiddleware = async (req, res, next) => {
     if (!token) {
       return res.status(401).send({ message: "Please login." });
     }
-    const decoded = await jwt.verify(token, SCECRET_KEY);
+    const decoded = await jwt.verify(token, process.env.SCECRET_KEY);
     const { _id } = decoded;
     if (!_id) {
       throw new Error(401).send("Unauthorized User");

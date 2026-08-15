@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 var validator = require("validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { SCECRET_KEY } = require("../config/env");
 const { Schema } = mongoose;
 
 const userSchema = new Schema(
@@ -79,7 +78,7 @@ const userSchema = new Schema(
 userSchema.methods.getJWT = async function () {
   const user = this;
 
-  const token = await jwt.sign({ _id: user._id }, SCECRET_KEY, {
+  const token = await jwt.sign({ _id: user._id }, process.env.SCECRET_KEY, {
     expiresIn: "1h",
   }); // jwt expires in 1 hr
 
