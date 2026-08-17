@@ -8,15 +8,22 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRoute = require("./routes/request");
 const userRouter = require("./routes/user");
+const http = require("http");
 const cors = require("cors");
+const { initializeServer } = require("./utils/socket");
+const chatRouter = require("./routes/chat");
 
 const app = express();
+
+const server = http.createServer(app);
+initializeServer(server);
 
 connectDB()
   .then((req, res) => {
     console.log("Database connection established...");
     // Server should start listening to any requests only after connecting to the Database first.
-    app.listen(process.env.PORT, () => {
+    server.listen(process.env.PORT, () => {
+      // replace app.listen with server.listen cz of line 17
       console.log(`Server is running on port ${process.env.PORT}`);
     });
   })
@@ -38,6 +45,8 @@ app.use("/", profileRouter); // profile API - logic for view/updating/reset pass
 app.use("/", requestRoute); // send and review connection request APIs
 
 app.use("/", userRouter); // get pending requests API
+
+app.use("/", chatRouter);
 
 // find user from req.body API  <- Admin | search api
 app.get("/users", async (req, res) => {
